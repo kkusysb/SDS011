@@ -42,7 +42,7 @@ SDS011::~SDS011() {
 
 void SDS011::setup(HardwareSerial* serial) {
   _serial = serial;
-  _serial->begin(9600, SERIAL_8N1);
+//  _serial->begin(9600, SERIAL_8N1);
 }
 
 void SDS011::onData(onDataHandler handler) {
@@ -115,6 +115,9 @@ void SDS011::loop() {
   static uint8_t index = 0;
   if (_serial->available()) {  // fill rxBuffer
     _rxBuff[index] = _serial->read();
+    
+    Serial.printf("%02x,",_rxBuff[index]);
+
     if (_rxBuff[0] == 0xAA) {  // advance if HEAD is received
       ++index;
     }
