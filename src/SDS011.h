@@ -29,6 +29,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Arduino.h>
 
+#ifdef ESP8266
+#include <SoftwareSerial.h>
+#define HardwareSerial SoftwareSerial
+#endif
+
 typedef std::function<void(float, float)> onDataHandler;  // pm2.5, pm10
 typedef std::function<void(uint8_t, uint8_t, uint8_t)> onResponseHandler;
 typedef std::function<void(int)> onErrorHandler;

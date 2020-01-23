@@ -122,26 +122,39 @@ void SDS011::loop() {
       ++index;
     }
   }
+  
+  if(index<10) return;
+  
   if (_rxBuff[9] == 0xAB) {  // process when TAIL is received
     if (!_checkCRC(_rxBuff, _rxBuff[8])) {  // 1. check CRC
       if (_onError) _onError(-1);           // 2. signal error on fail
-    } else {
+      goto loop_reset;
+    }
+    else {
       // 2. check message type
       if (_rxBuff[1] == 0xC5) {             // 3. response or data?
         if (_onResponse) _onResponse(_rxBuff[2], _rxBuff[3], _rxBuff[4]);     // 4. signal response
-      } else {
+        goto loop_reset;
+      }
+      else {
         uint16_t pm2_5_raw = (_rxBuff[3] << 8) + _rxBuff[2];
         float pm2_5 = pm2_5_raw / 10.0;
         uint16_t pm10_raw = (_rxBuff[5] << 8) + _rxBuff[4];
         float pm10 = pm10_raw / 10.0;
         if (_onData) _onData(pm2_5, pm10);
+        goto loop_reset;
       }
     }
-    // 4. reset
-    memset(_rxBuff, 0x00, sizeof(_rxBuff));
-    index = 0;
   }
-}
+  
+  if (_onError) _onError(-2);  // wrong data
+  
+  // 4. reset
+  //memset(_rxBuff, 0x00, sizeof(_rxBuff));
+loop_reset:
+  index = 0;
+  return;   
+} 
 
 uint8_t SDS011::_getCRC(uint8_t buff[]) {
   uint8_t crc = 0;
