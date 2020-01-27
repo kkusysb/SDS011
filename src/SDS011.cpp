@@ -26,7 +26,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <SDS011.h>
 
 #include <math.h>  // for pow()
-
+#include <TimeLib.h>
 #include "..\..\..\src\lprints.h"
 
 SDS011::SDS011() :
@@ -46,7 +46,7 @@ void SDS011::setup(HardwareSerial* serial) {
   _serial = serial;
 //  _serial->begin(9600, SERIAL_8N1);
 //  l_printf("serial=0x%8x\n",(uint32_t)_serial);
-
+  loop();   // reset timeout
 }
 
 void SDS011::onData(onDataHandler handler) {
@@ -117,6 +117,18 @@ void SDS011::queryData() {
 
 void SDS011::loop() {
   static uint8_t index = 0;
+  static time_t timeout=0;
+  
+  {
+  time_t t;
+    t=now();
+    if(index) { // >0
+      if( t-timeout > 1*1000) // 5sec ???
+        index=0;  // reset stream
+    }
+    else
+      timeout=t;
+  }
 
   //l_printf("serial=0x%8x\n",(uint32_t)_serial);
   if(_serial)
