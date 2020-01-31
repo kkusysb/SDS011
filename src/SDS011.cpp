@@ -135,7 +135,7 @@ void SDS011::loop() {
     if (_serial->available()) {  // fill rxBuffer
       _rxBuff[index] = _serial->read();
     
-      Serial.printf("%02x,",_rxBuff[index]);
+      l_printf("%02x,",_rxBuff[index]);
 
       if (_rxBuff[0] == 0xAA) {  // advance if HEAD is received
         ++index;
