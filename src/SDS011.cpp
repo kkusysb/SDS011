@@ -47,6 +47,8 @@ void SDS011::setup(HardwareSerial* serial) {
 //  _serial->begin(9600, SERIAL_8N1);
 //  l_printf("serial=0x%8x\n",(uint32_t)_serial);
   loop();   // reset timeout
+  last_pm25=last_pm10=0;
+  last_time=0;
 }
 
 void SDS011::onData(onDataHandler handler) {
@@ -160,7 +162,13 @@ void SDS011::loop() {
         float pm2_5 = pm2_5_raw / 10.0;
         uint16_t pm10_raw = (_rxBuff[5] << 8) + _rxBuff[4];
         float pm10 = pm10_raw / 10.0;
+        
+        last_pm25=pm2_5;
+        last_pm10=pm10;
+        last_time=now();
+
         if (_onData) _onData(pm2_5, pm10);
+        
         goto loop_reset;
       }
     }

@@ -71,4 +71,8 @@ class SDS011 {
     VENLO
   };
   float correct(float raw, float humidity, Correction correction);
+
+  float last_pm25, last_pm10;
+  time_t last_time;
+
 };
