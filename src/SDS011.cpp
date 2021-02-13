@@ -27,7 +27,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <math.h>  // for pow()
 #include <TimeLib.h>
-#include "..\..\..\src\lprints.h"
+#include "../../../src/lprints.h"
 
 SDS011::SDS011() :
   _serial(nullptr),
